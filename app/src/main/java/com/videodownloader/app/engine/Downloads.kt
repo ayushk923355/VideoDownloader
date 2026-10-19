@@ -81,8 +81,11 @@ object Downloads {
         return when {
             "unsupported url" in m -> "This link isn’t supported. Only sites that yt-dlp supports can be downloaded."
             "drm" in m -> "This video is DRM-protected and can’t be saved."
-            "sign in" in m || "login" in m || "private" in m -> "This video needs a login, which isn’t supported."
-            "requested format is not available" in m -> "That video has no stream at your quality setting."
+            "sign in" in m || "login" in m || "private" in m || "members-only" in m ->
+                "YouTube requires sign-in for this video. Try a public, non-age-restricted video link; private/member-only videos aren't supported."
+            "requested format is not available" in m -> "No compatible stream was found at this quality. Try a lower quality in Settings."
+            "confirm you’re not a bot" in m || "po token" in m || "verify you’re human" in m ->
+                "YouTube blocked this request for verification. Try again later or use a publicly accessible video. The app can't bypass YouTube verification."
             "resolve host" in m || "timed out" in m || "connection" in m || "network" in m ->
                 "Connection problem. Check your internet and retry."
             else -> "Download failed. Check the link and try again."

@@ -15,6 +15,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,10 +41,15 @@ val Accent = Brush.horizontalGradient(listOf(Cyan, Blue, Violet, Magenta))
 
 @Composable
 fun VDTheme(content: @Composable () -> Unit) {
+    val dark = isSystemInDarkTheme()
     MaterialTheme(
-        colorScheme = darkColorScheme(
-            primary = Blue, background = Ink, surface = Ink,
+        colorScheme = if (dark) darkColorScheme(
+            primary = Blue, background = Ink, surface = Color(0xFF171A32),
             onSurface = TextHi, onBackground = TextHi
+        ) else lightColorScheme(
+            primary = Blue, background = Color(0xFFF5F7FF), surface = Color.White,
+            onSurface = Color(0xFF17172B), onBackground = Color(0xFF17172B),
+            secondary = Violet
         ),
         content = content
     )
@@ -50,13 +57,15 @@ fun VDTheme(content: @Composable () -> Unit) {
 
 @Composable
 fun Backdrop(content: @Composable BoxScope.() -> Unit) {
-    Box(Modifier.fillMaxSize().background(Ink)) {
+    val dark = androidx.compose.foundation.isSystemInDarkTheme()
+    val base = if (dark) Ink else Color(0xFFF5F7FF)
+    Box(Modifier.fillMaxSize().background(base)) {
         Box(Modifier.fillMaxSize().background(
-            Brush.radialGradient(listOf(Cyan.copy(.28f), Color.Transparent), Offset(80f, 120f), 800f)))
+            Brush.radialGradient(listOf(Cyan.copy(if (dark) .28f else .20f), Color.Transparent), Offset(80f, 120f), 800f)))
         Box(Modifier.fillMaxSize().background(
-            Brush.radialGradient(listOf(Violet.copy(.34f), Color.Transparent), Offset(1000f, 1100f), 900f)))
+            Brush.radialGradient(listOf(Violet.copy(if (dark) .34f else .16f), Color.Transparent), Offset(1000f, 1100f), 900f)))
         Box(Modifier.fillMaxSize().background(
-            Brush.radialGradient(listOf(Magenta.copy(.24f), Color.Transparent), Offset(100f, 2000f), 800f)))
+            Brush.radialGradient(listOf(Magenta.copy(if (dark) .24f else .12f), Color.Transparent), Offset(100f, 2000f), 800f)))
         content()
     }
 }

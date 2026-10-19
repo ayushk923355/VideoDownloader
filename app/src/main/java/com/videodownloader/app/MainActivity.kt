@@ -8,11 +8,15 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -86,15 +90,18 @@ private fun AppRoot() {
 private fun NavBar(selected: Int, onSelect: (Int) -> Unit) {
     val names = listOf("Home", "Library", "Settings")
     GlassCard(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            names.forEachIndexed { i, n ->
-                val shape = RoundedCornerShape(16.dp)
-                Box(
-                    Modifier.weight(1f).heightIn(min = 44.dp).clip(shape)
-                        .then(if (i == selected) Modifier.background(Accent) else Modifier)
-                        .clickable { onSelect(i) },
-                    contentAlignment = Alignment.Center
-                ) { Text(n, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = if (i == selected) Color.White else TextLo) }
+        BoxWithConstraints {
+            val gap = 6.dp
+            val itemWidth = (maxWidth - gap * 2) / 3
+            val offset by animateDpAsState(targetValue = (itemWidth + gap) * selected, animationSpec = spring(dampingRatio = 0.82f, stiffness = 500f), label = "nav-slide")
+            Box(Modifier.offset(x = offset).width(itemWidth).height(46.dp).clip(RoundedCornerShape(16.dp)).background(Accent))
+            Row(horizontalArrangement = Arrangement.spacedBy(gap), modifier = Modifier.fillMaxWidth().offset(y = (-46).dp)) {
+                names.forEachIndexed { i, n ->
+                    val shape = RoundedCornerShape(16.dp)
+                    Box(Modifier.weight(1f).height(46.dp).clip(shape).clickable { onSelect(i) }, contentAlignment = Alignment.Center) {
+                        Text(n, fontWeight = FontWeight.Bold, fontSize = 13.sp, color = if (i == selected) Color.White else MaterialTheme.colorScheme.onSurface)
+                    }
+                }
             }
         }
     }
