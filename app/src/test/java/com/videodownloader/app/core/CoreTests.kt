@@ -43,7 +43,7 @@ class CoreTests {
     }
     @Test fun verifierRejectsMissingAndEmpty() {
         assertFalse(CompletionVerifier.verify(File("/nonexistent/file.mp4")))
-        val f = File.createTempFile("vd", ".mp4")
+        val f = File.createTempFile("vdl", ".mp4")
         assertFalse(CompletionVerifier.verify(f))
         f.writeText("x"); assertTrue(CompletionVerifier.verify(f)); f.delete()
     }
